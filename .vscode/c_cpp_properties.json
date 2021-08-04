@@ -1,0 +1,43 @@
+//
+// !!! WARNING !!! AUTO-GENERATED FILE!
+// PLEASE DO NOT MODIFY IT AND USE "platformio.ini":
+// https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags
+//
+{
+    "configurations": [
+        {
+            "name": "PlatformIO",
+            "includePath": [
+                "/home/jordan/Arduino/mySketches/attiny-intercom/include",
+                "/home/jordan/Arduino/mySketches/attiny-intercom/src",
+                "/home/jordan/.platformio/packages/tool-unity",
+                ""
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "path": [
+                    "/home/jordan/Arduino/mySketches/attiny-intercom/include",
+                    "/home/jordan/Arduino/mySketches/attiny-intercom/src",
+                    "/home/jordan/.platformio/packages/tool-unity",
+                    ""
+                ]
+            },
+            "defines": [
+                "F_CPU=20000000L",
+                "PLATFORMIO=50101",
+                "ARDUINO_attinyxy4",
+                "MILLIS_USE_TIMERD0",
+                "UARTBAUD5V",
+                ""
+            ],
+            "cStandard": "c11",
+            "cppStandard": "c++11",
+            "compilerPath": "/home/jordan/.platformio/packages/toolchain-atmelavr@1.70300.191015/bin/avr-gcc",
+            "compilerArgs": [
+                "-mmcu=attiny1614",
+                ""
+            ]
+        }
+    ],
+    "version": 4
+}
