@@ -1,5 +1,7 @@
 #include <stdint.h>
 #include <avr/interrupt.h>
+#include <avr/io.h>
+#include <Arduino.h>
 
 #define NUM_BUFS 8
 #define LEN_BUFS 32
@@ -10,15 +12,23 @@
 /* DAC output pin PA6 - output to speaker */
 #define SPEAKPORT PORTA
 #define SPEAKPIN (1 << 6)
+/* the push-to-talk button */
+#define PTTPORT PORTA
+#define PTTPIN (1 << 5)
 /* Sampling timer */
 #define SAMPLE_TIMER TCB0
 #define SAMPLE_FREQ 8000 /* Hz */
 #define SAMPLE_TIMER_START() SAMPLE_TIMER.CTRLA |= TCB_ENABLE_bm
 #define SAMPLE_TIMER_STOP() SAMPLE_TIMER.CTRLA &= ~(TCB_ENABLE_bm)
 #define F_CPU 10000000  // 20Mhz prescaled by 2
+#define FALSE (0)
+#define TRUE !(FALSE)
+#define LED_ON() VPORTA.OUT |= PIN7_bm
+#define LED_OFF() VPORTA.OUT &= ~(PIN7_bm)
+#define LED_TOGGLE() VPORTA.IN = PIN7_bm
+// threshold to distinguish a genuine pin interrupt from a bounce
+#define DEBOUNCE_MS 200
 
-
-volatile uint32_t systick_ms;
 
 typedef enum {empty = 0, filling = 1, filled = 2} buffer_status;
 typedef struct {
@@ -28,35 +38,37 @@ typedef struct {
 
 volatile buffer_t buffer[NUM_BUFS];
 volatile uint8_t write_buf, write_pos, read_buf, read_pos = 0;
+volatile uint8_t timer_tick = FALSE;
+volatile uint8_t adc_data_ready = FALSE;
+volatile uint16_t adc_sample = 0;
+volatile uint8_t ptt_flipped = FALSE;
+uint32_t last_ptt = 0;
+volatile enum mode {listening = 0, speaking = 1} mode;
 
 /* timer tick which is set to go off at 8000Hz */
 /* needs to deal with output of samples; ADC is handled in a ResultReady IRQ */
 ISR(TCB0_INT_vect){
-    VPORTA.IN = PIN7_bm; // toggle the output  
-    systick_ms++;
-    dac_write_sample();
+    timer_tick = TRUE;
     TCB0.INTFLAGS = TCB_CAPT_bm;
-    VPORTA.IN = PIN7_bm; // toggle the output
 }
 
-/* Part of RECORD routine - Grab result from ADC recording */
-ISR(ADC0_RESRDY_vect) {
-  VPORTA.IN = PIN7_bm; // toggle the output
-  
-  /* Interrupt flag cleared on reading of ADC result register */
-  buffer[write_buf].samples[write_pos++] = ADC0.RES;
-  if (write_pos == LEN_BUFS) {
-    /* this one's full */
-    buffer[write_buf].status = filled;
-    write_buf = (write_buf + 1) % NUM_BUFS;
-    write_pos = 0;
 
-    if (buffer[write_buf].status != empty) {
-      signal_error();
-    }
-    buffer[write_buf].status = filling;
+
+/* Grab sample from ADC */
+ISR(ADC0_RESRDY_vect) {
+
+  /* Interrupt flag cleared on reading of ADC result register */
+  adc_sample = ADC0.RES;
+  adc_data_ready = TRUE;
+
+}
+
+ISR(PORTA_PORT_vect) {
+  uint8_t flags = PORTA.INTFLAGS;
+  PORTA.INTFLAGS = flags; //clear flags
+  if (flags & PTTPIN) {
+    ptt_flipped = TRUE;
   }
-  VPORTA.IN = PIN7_bm; // toggle the output
 }
 
 void dac_write_sample(void) {
@@ -77,6 +89,23 @@ void dac_write_sample(void) {
       read_pos = 0;
     }
   }
+}
+
+// Write the most recent ADC sample to the buffer
+void adc_write_sample(uint16_t sample) {
+
+  buffer[write_buf].samples[write_pos++] = sample;
+  if (write_pos == LEN_BUFS) {
+    /* this one's full */
+    buffer[write_buf].status = filled;
+    write_buf = (write_buf + 1) % NUM_BUFS;
+    write_pos = 0;
+
+    if (buffer[write_buf].status != empty) {
+      signal_error();
+    }
+    buffer[write_buf].status = filling;
+  }  
 }
 
 void adc_init(void) {
@@ -131,20 +160,26 @@ void timer_init(void) {
 
 void signal_error(void) {
 	// Turn the LED on
-    VPORTA.OUT |= PIN7_bm; 
+    LED_ON(); 
     exit(-1);
 }
 
-void setup(){
-
-  VPORTA.DIR |= PIN7_bm;  	//led on PA7 is an output
-  VPORTA.OUT &= ~PIN7_bm;  	// pin low = LED off
+void setup() {
 
   /* set the prescaler to 2 get 10MHz */
   ccp_write_io(
       (void *)&(CLKCTRL.MCLKCTRLB),
       CLKCTRL_PDIV_2X_gc | 1 << CLKCTRL_PEN_bp
   );
+
+  VPORTA.DIR |= PIN7_bm;  	//led on PA7 is an output
+  LED_OFF();
+
+  // The push-to-talk button is an input with interrupt on both edges / change 
+  PTTPORT.PIN5CTRL = PORT_PULLUPEN_bm | 0x1;
+
+  // initialise the debounce timer
+  last_ptt = millis();
 
   timer_init();
   adc_init();
@@ -158,4 +193,25 @@ void setup(){
 
 void loop() {
 
+  if (timer_tick) {
+    timer_tick = FALSE;
+    dac_write_sample();
+  }
+
+  if (adc_data_ready) {
+    adc_data_ready = FALSE;
+    adc_write_sample(adc_sample);
+  }
+
+  if (ptt_flipped) {
+    // if ((millis() - last_ptt) > DEBOUNCE_MS) {
+      mode = ((PTTPORT.IN & PTTPIN) ? listening : speaking);
+      // last_ptt = millis();
+    // }
+    if (mode == speaking) {
+      LED_ON();
+    } else {
+      LED_OFF();
+    }
+  }
 }
