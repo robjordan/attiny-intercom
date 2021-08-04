@@ -1,4 +1,4 @@
-# intercom
+# attiny-intercom
 Wireless battery-powered intercom using ATtiny and NRF24L01+ radio.
 
 The idea is to have a low-power, low-tech radio intercom for use between a pair of cyclists who sometimes get too far apart for face-to-face communications.
