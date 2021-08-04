@@ -3,7 +3,7 @@ Wireless battery-powered intercom using ATtiny and NRF24L01+ radio.
 
 The idea is to have a low-power, low-tech radio intercom for use between a pair of cyclists who sometimes get too far apart for face-to-face communications.
 
-ATtiny 1 series microcontrollers have 10-bit ADC and 8-bit DAC which are fast enough for voice-grade 8KHz sampling. 
+ATtiny 1 series microcontrollers have 10-bit ADC and 8-bit DAC which are fast enough for voice-grade 8kHz sampling => data rate 64 kb/s required.  Ideally we'd filter to 300Hz - 3.4KHz to avoid aliasing.
 
 Cheap NRF24L01+ boards promise good range at 250kb/s (maybe 100 metres+?).
 
