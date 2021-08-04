@@ -9,6 +9,12 @@ Cheap NRF24L01+ boards promise good range at 250kb/s (maybe 100 metres+?).
 
 MAX9814 board with electret capsule gives a strong signal that's noisy but clear enough to be intelligible.
 
+Here's a rough schematic of the solution:
+![Rough schematic](./images/rough-schematic.jpg)
+
+... and a photo of the prototype:
+![Prototype](./images/prototype.jpg)
+
 
 
 
