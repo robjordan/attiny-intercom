@@ -10,7 +10,6 @@
             "includePath": [
                 "/home/jordan/Arduino/mySketches/attiny-intercom/include",
                 "/home/jordan/Arduino/mySketches/attiny-intercom/src",
-                "/home/jordan/.platformio/packages/framework-arduino-megaavr-megatinycore/libraries/SPI/src",
                 "/home/jordan/.platformio/packages/framework-arduino-megaavr-megatinycore/cores/megatinycore/api/deprecated",
                 "/home/jordan/.platformio/packages/framework-arduino-megaavr-megatinycore/cores/megatinycore",
                 "/home/jordan/.platformio/packages/framework-arduino-megaavr-megatinycore/variants/txy4",
@@ -22,6 +21,7 @@
                 "/home/jordan/.platformio/packages/framework-arduino-megaavr-megatinycore/libraries/EEPROM/src",
                 "/home/jordan/.platformio/packages/framework-arduino-megaavr-megatinycore/libraries/Logic/src",
                 "/home/jordan/.platformio/packages/framework-arduino-megaavr-megatinycore/libraries/SD/src",
+                "/home/jordan/.platformio/packages/framework-arduino-megaavr-megatinycore/libraries/SPI/src",
                 "/home/jordan/.platformio/packages/framework-arduino-megaavr-megatinycore/libraries/Servo/src",
                 "/home/jordan/.platformio/packages/framework-arduino-megaavr-megatinycore/libraries/Servo_megaTinyCore/src",
                 "/home/jordan/.platformio/packages/framework-arduino-megaavr-megatinycore/libraries/SoftwareSerial/src",
@@ -38,7 +38,6 @@
                 "path": [
                     "/home/jordan/Arduino/mySketches/attiny-intercom/include",
                     "/home/jordan/Arduino/mySketches/attiny-intercom/src",
-                    "/home/jordan/.platformio/packages/framework-arduino-megaavr-megatinycore/libraries/SPI/src",
                     "/home/jordan/.platformio/packages/framework-arduino-megaavr-megatinycore/cores/megatinycore/api/deprecated",
                     "/home/jordan/.platformio/packages/framework-arduino-megaavr-megatinycore/cores/megatinycore",
                     "/home/jordan/.platformio/packages/framework-arduino-megaavr-megatinycore/variants/txy4",
@@ -50,6 +49,7 @@
                     "/home/jordan/.platformio/packages/framework-arduino-megaavr-megatinycore/libraries/EEPROM/src",
                     "/home/jordan/.platformio/packages/framework-arduino-megaavr-megatinycore/libraries/Logic/src",
                     "/home/jordan/.platformio/packages/framework-arduino-megaavr-megatinycore/libraries/SD/src",
+                    "/home/jordan/.platformio/packages/framework-arduino-megaavr-megatinycore/libraries/SPI/src",
                     "/home/jordan/.platformio/packages/framework-arduino-megaavr-megatinycore/libraries/Servo/src",
                     "/home/jordan/.platformio/packages/framework-arduino-megaavr-megatinycore/libraries/Servo_megaTinyCore/src",
                     "/home/jordan/.platformio/packages/framework-arduino-megaavr-megatinycore/libraries/SoftwareSerial/src",
